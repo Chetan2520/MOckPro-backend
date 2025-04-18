@@ -1,0 +1,22 @@
+{
+    "version": 2,
+    "builds": [
+    {
+    "src": "server.js",
+    "use": "@vercel/node"
+    }
+    ],
+    "routes": [
+    {
+    "src": "/api/(.*)",
+    "dest": "server.js"
+    }
+    ],
+    "env": {
+    
+    "PORT":5000,
+    "URI":"mongodb://127.0.0.1:27017/MockPro",
+    "GEMINI_API_KEY":"AIzaSyAOdLLzE42gnI0qE65dgNMnNvnhPvPq8_g",
+    "VAPI_WEB_TOKEN":"8db2aaf2-7519-4f8b-ae73-0e9d59f5db3b"
+    }
+}

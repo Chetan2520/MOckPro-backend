@@ -1,20 +1,13 @@
 require('dotenv').config();
 const express = require("express");
-const app = express();
+const serverless = require('serverless-http');
 const mongoose = require("mongoose");
-// const dotenv = require("dotenv");
 const cors = require("cors");
 
 const userRoute = require("./routes/userRoute");
 const vapiRoutes = require('./routes/vapi');
 
-// dotenv.config();   
-// const path = require("path");
-// app.use(express.static(path.join(__dirname, "client", "build")));
-
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "client", "build", "index.html"));
-// });
+const app = express();
 
 // Middleware
 app.use(cors());
@@ -25,14 +18,27 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/users", userRoute);
 app.use("/api/vapi", vapiRoutes);
 
-// DB connection and server start
-mongoose.connect(process.env.URI)
-  .then(() => {
-    console.log("Mongoose Connected Successfully");
-    app.listen(process.env.PORT, () => {
-      console.log("Server running on port", process.env.PORT || 8000);
-    });
-  })
-  .catch((err) => {
-    console.log("MongoDB connection error:", err);
-  });
+app.get("/", (req, res) => {
+  res.send("Home Page");
+});
+
+// MongoDB connection (initialize once)
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected) return;
+  try {
+    await mongoose.connect(process.env.URI);
+    isConnected = true;
+    console.log("MongoDB Connected");
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+  }
+};
+connectDB(); // Call once
+
+app.listen(process.env.PORT,()=>{
+  console.log(`working on ${process.env.PORT}`)
+})
+// Export for Vercel
+module.exports = app;
+module.exports.handler = serverless(app);

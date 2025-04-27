@@ -1,44 +1,40 @@
 require('dotenv').config();
 const express = require("express");
-const serverless = require('serverless-http');
+const app = express();
 const mongoose = require("mongoose");
+// const dotenv = require("dotenv");
 const cors = require("cors");
 
 const userRoute = require("./routes/userRoute");
 const vapiRoutes = require('./routes/vapi');
+const databaseRoute=require("./routes/databaseRoute")
 
-const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+
 // Routes
 app.use("/api/users", userRoute);
 app.use("/api/vapi", vapiRoutes);
+app.use("/api/database", databaseRoute);
 
-app.get("/", (req, res) => {
-  res.send("Home Page");
-});
+// DB connection and server start
+mongoose.connect(process.env.URI)
+  .then(() => {
+    console.log("Mongoose Connected Successfully");
+    app.listen(process.env.PORT, () => {
+      console.log("Server running on port", process.env.PORT);
+    });
+  })
+  .catch((err) => {
+    console.log("MongoDB connection error:", err);
+  });
+  
 
-// MongoDB connection (initialize once)
-let isConnected = false;
-const connectDB = async () => {
-  if (isConnected) return;
-  try {
-    await mongoose.connect(process.env.URI);
-    isConnected = true;
-    console.log("MongoDB Connected");
-  } catch (err) {
-    console.error("MongoDB connection error:", err);
-  }
-};
-connectDB(); // Call once
-
-app.listen(process.env.PORT,()=>{
-  console.log(`working on ${process.env.PORT}`)
-})
-// Export for Vercel
-module.exports = app;
-module.exports.handler = serverless(app);
+  app.get("/",(req,res)=>{
+    res.send("Home Page");
+  })

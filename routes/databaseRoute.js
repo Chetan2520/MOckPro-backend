@@ -5,8 +5,9 @@ const Interview = require('../models/inteviewModel');
 
 
 router.get('/items', async (req, res) => {
-    const items = await Interview.find();
-    res.json(items);
+    const items = await Interview.find().sort({ createdAt: -1 }).limit(1);
+    res.json(items[0]);
+    
   });
 
 

@@ -10,8 +10,8 @@ const vapiRoutes = require('./routes/vapi');
 const databaseRoute=require("./routes/databaseRoute")
 
 
-// Middleware
 app.use(cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

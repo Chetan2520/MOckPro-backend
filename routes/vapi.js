@@ -36,9 +36,9 @@ Thank you! <3`;
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const rawQuestions = await response.text();
+    // console.log(result.response.text())
 
     const questions = JSON.parse(rawQuestions);
-
     const newInterview = new Interview({
       role,
       type,

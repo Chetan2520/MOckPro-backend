@@ -13,7 +13,7 @@ const scheduleModel = require("./models/scheduleModel");
 
 const app = express();
 
-// Middlewares
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -29,33 +29,16 @@ app.get("/", (req, res) => {
   res.send("Home Page");
 });
 
-// MongoDB connection and server start
-mongoose.connect(process.env.URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log("✅ Mongoose Connected Successfully");
-
-    // Start server only after DB connection
-    app.listen(process.env.PORT, () => {
-      console.log("🚀 Server running on port", process.env.PORT);
-    });
-
-    // ✅ Start Cron Job after DB is ready
-    startCronJob();
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
-  });
-
-// 📬 Email config
+// Nodemailer transporter (global use)
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, // your email
-    pass: process.env.EMAIL_PASS  // your app password
-  }
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
 });
 
-// ⏰ Cron Job to check interview time every minute
+// Cron job function
 function startCronJob() {
   cron.schedule("* * * * *", async () => {
     const now = new Date();
@@ -66,15 +49,18 @@ function startCronJob() {
         isNotified: { $ne: true },
       });
 
+      console.log("📅 Found interviews:", interviews.length);
+
       for (const interview of interviews) {
-        const mailOptions = {
+        console.log("📨 Sending to:", interview.userId);
+
+        await transporter.sendMail({
           from: process.env.EMAIL_USER,
-          to: interview.userId, // 👈 ensure userId is an email
+          to: interview.userId,
           subject: "Interview Reminder",
           text: `Hi, this is a reminder for your ${interview.interviewType} interview scheduled at ${interview.scheduleDate}.\n\nMessage: ${interview.message}`,
-        };
+        });
 
-        await transporter.sendMail(mailOptions);
         await scheduleModel.findByIdAndUpdate(interview._id, { isNotified: true });
 
         console.log(`✅ Email sent to ${interview.userId}`);
@@ -86,3 +72,20 @@ function startCronJob() {
 
   console.log("⏰ Cron job started: Checking interviews every minute");
 }
+
+// MongoDB connection and server start
+mongoose.connect(process.env.URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("✅ Mongoose Connected Successfully");
+
+    app.listen(process.env.PORT, () => {
+      console.log("🚀 Server running on port", process.env.PORT);
+    });
+
+    startCronJob(); // Start cron only after DB is connected
+  })
+  .catch((err) => { 
+    console.error("❌ MongoDB connection error:", err);
+  });
+
+module.exports = transporter; // So you can import in other files

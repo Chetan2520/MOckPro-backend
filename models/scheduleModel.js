@@ -1,11 +1,24 @@
 const mongoose = require("mongoose");
 
 const scheduleSchema = new mongoose.Schema({
-  userId: String, // could be an email
-  interviewType: String,
-  scheduleDate: Date,
+  userId: {
+    type: String,
+    required: true, 
+  },
+  interviewType: {
+    type: String,
+    enum: ["HR", "Technical"],
+    required: true, 
+  }, 
+  scheduleDate: {
+    type: Date,
+    required: true,
+  },
   message: String,
-  isNotified: { type: Boolean, default: false }
+  isNotified: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-module.exports = mongoose.model("Schedule", scheduleSchema);
+module.exports = mongoose.model("ScheduledInterview", scheduleSchema);

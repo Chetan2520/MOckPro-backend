@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/users", userRoute);
 app.use("/api/vapi", vapiRoutes);
 app.use("/api/database", databaseRoute);
-app.use("/api/user", scheduledInterview);
+app.use("/user", scheduledInterview);
 
 // Base route
 app.get("/", (req, res) => {

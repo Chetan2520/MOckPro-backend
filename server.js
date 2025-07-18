@@ -66,11 +66,11 @@ function startCronJob() {
         console.log(`✅ Email sent to ${interview.userId}`);
       }
     } catch (err) {
-      console.error("❌ Cron job error:", err);
+      console.error(" Cron job error:", err);
     }
   });
 
-  console.log("⏰ Cron job started: Checking interviews every minute");
+  console.log(" Cron job started: Checking interviews every minute");
 }
 
 // MongoDB connection and server start
@@ -79,13 +79,13 @@ mongoose.connect(process.env.URI, { useNewUrlParser: true, useUnifiedTopology: t
     console.log("✅ Mongoose Connected Successfully");
 
     app.listen(process.env.PORT, () => {
-      console.log("🚀 Server running on port", process.env.PORT);
+      console.log(" Server running on port", process.env.PORT);
     });
 
     startCronJob(); // Start cron only after DB is connected
   })
   .catch((err) => { 
-    console.error("❌ MongoDB connection error:", err);
+    console.error("MongoDB connection error:", err);
   });
 
 module.exports = transporter; // So you can import in other files

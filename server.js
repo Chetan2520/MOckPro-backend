@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/users", userRoute);
 app.use("/api/vapi", vapiRoutes);
 app.use("/api/database", databaseRoute);
-app.use("/user", scheduledInterview);
+app.use("/api/user", scheduledInterview);
 
 // Base route
 app.get("/", (req, res) => {
@@ -74,7 +74,7 @@ function startCronJob() {
 }
 
 // MongoDB connection and server start
-mongoose.connect(process.env.URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.URI)
   .then(() => {
     console.log("✅ Mongoose Connected Successfully");
 

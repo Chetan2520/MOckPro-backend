@@ -42,7 +42,7 @@ Thank you! <3`
 
     console.log("🔹 Raw Gemini Response:", rawResponse);
 
-    // ✅ Clean & Parse JSON
+    //  ✅ Clean & Parse JSON
     rawResponse = rawResponse.replace(/```json|```/g, '').trim();
     let questions;
     try {
@@ -61,10 +61,12 @@ Thank you! <3`
       finalized: true,
       userid,
     });
-
     await newInterview.save();
 
-    res.json({ success: true, questions });
+    // ✅ Return the saved interview's ID along with questions
+    res.json({ success: true, interviewId: newInterview._id, questions });
+    
+
 
   } catch (error) {
     console.error('❌ Error generating interview questions:', error.message);
@@ -74,7 +76,7 @@ Thank you! <3`
 
 
 // ✅ Auto Feedback Generation (User submits answers → Gemini JSON feedback)
-router.post('/submit-interview', async (req, res) => {
+router.post('/feedback', async (req, res) => {
   const { userid, interviewId, answers } = req.body;
 
   if (!userid || !interviewId || !answers) {

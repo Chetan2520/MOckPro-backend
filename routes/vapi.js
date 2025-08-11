@@ -3,7 +3,7 @@ const router = express.Router();
 const Interview = require('../models/inteviewModel');
 const InterviewFeedback = require('../models/feedbackModel'); // ✅ Tumhara sahi model
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-
+require('dotenv').config();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // ✅ Token Endpoint
@@ -15,13 +15,15 @@ router.get('/token', (req, res) => {
 // ✅ Generate Interview Questions (Safe & Clean)
 router.post('/generate-text', async (req, res) => {
   const { type, role, level, techstack, amount, userid } = req.body;
+  conole.log(req.body);
 
   if (!type || !role || !level || !techstack || !amount || !userid) {
     return res.status(400).json({ success: false, message: 'Missing required fields' });
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    // const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash:generateContent" });
 
     const prompt =` Prepare questions for a job interview.
 The job role is ${role}.
@@ -36,10 +38,11 @@ Return the questions formatted like this:
 Thank you! <3`
 
     console.log("🔹 Prompt Sent to Gemini:", prompt);
-
+ 
     const result = await model.generateContent(prompt);
     let rawResponse = await result.response.text();
 
+    console.log(result.response.text());
     console.log("🔹 Raw Gemini Response:", rawResponse);
 
     //  ✅ Clean & Parse JSON

@@ -15,7 +15,7 @@ router.get('/token', (req, res) => {
 // ✅ Generate Interview Questions (Safe & Clean)
 router.post('/generate-text', async (req, res) => {
   const { type, role, level, techstack, amount, userid } = req.body;
-  conole.log(req.body);
+  console.log(req.body);
 
   if (!type || !role || !level || !techstack || !amount || !userid) {
     return res.status(400).json({ success: false, message: 'Missing required fields' });

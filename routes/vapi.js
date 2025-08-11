@@ -23,7 +23,7 @@ router.post('/generate-text', async (req, res) => {
 
   try {
     // const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash:generateContent" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const prompt =` Prepare questions for a job interview.
 The job role is ${role}.

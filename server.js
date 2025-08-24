@@ -4,25 +4,31 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cron = require("node-cron");
 const nodemailer = require("nodemailer");
+const cookieParser = require("cookie-parser");
 
 const userRoute = require("./routes/userRoute");
 const vapiRoutes = require("./routes/vapi");
 const databaseRoute = require("./routes/databaseRoute");
 const scheduledInterview = require("./routes/schedule");
 const scheduleModel = require("./models/scheduleModel");
+const userAuth = require("./Auth/userAuth");
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api/users", userRoute);
-app.use("/api/vapi", vapiRoutes);
-app.use("/api/database", databaseRoute);
-app.use("/api/user", scheduledInterview);
+app.use("/api/vapi", userAuth, vapiRoutes);
+app.use("/api/database", userAuth, databaseRoute);
+app.use("/api/user", userAuth, scheduledInterview);
 
 // Base route
 app.get("/", (req, res) => {

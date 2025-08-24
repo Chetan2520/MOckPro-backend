@@ -1,11 +1,20 @@
-const express=require("express");
+const express=require("express")
 
-const router=express.Router();
-
-router.get("/",(req,res)=>{
-    res.send("working");
-    console.log("working...");
-})
+const {Signup, Login, Logout} = require("../controllers/user.contollers")
 
 
-module.exports=router;
+
+const userRoute=express.Router()
+
+
+
+userRoute.post("/signup",Signup)
+
+userRoute.post("/login",Login)
+
+userRoute.get("/logout",Logout)
+
+
+
+
+module.exports=userRoute

@@ -27,7 +27,7 @@ router.post("/scheduleInterview", async (req, res) => {
 
 //send data to frontend
 
-router.get("/scheduled-data", async (req, res) => {
+router.get("/find-scheduled", async (req, res) => {
   const scheduledData = await scheduleModel.find();
   res.status(200).json({ success: true, data: scheduledData });
 });
